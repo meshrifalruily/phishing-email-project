@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Email Detector - Results</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .header h1 { font-size: 26px; }
+
+        .header p { font-size: 13px; opacity: 0.9; margin-top: 8px; }
+
+        .content { padding: 30px; }
+
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: #f0f0f0;
+            color: #333;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .back-button:hover { background: #e0e0e0; }
+
+        .success-message {
+            background: #e6f4ea;
+            color: #1e8e3e;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 4px solid #1e8e3e;
+            margin-bottom: 20px;
+        }
+
+        .result-card {
+            background: #f9f9f9;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .result-card h3 { font-size: 15px; margin-bottom: 10px; color: #333; }
+
+        .result-card p {
+            color: #666;
+            line-height: 1.5;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .badge-phishing { background: #ffe6e6; color: #d32f2f; }
+
+        .badge-safe { background: #e6f4ea; color: #1e8e3e; }
+
+        .confidence { font-weight: 600; font-size: 13px; color: #666; margin-top: 8px; }
+
+        @media (max-width: 600px) {
+            .content { padding: 20px; }
+            .header { padding: 20px; }
+            .header h1 { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 Phishing Email Detector</h1>
+            <p>AI-powered phishing detection results</p>
+        </div>
+
+        <div class="content">
+            <a href="/" class="back-button">← Back</a>
+
+            <div class="success-message">✓ Analysis complete!</div>
+
+            <div class="result-card">
+                <h3>📧 Email Analysis</h3>
+                <p>{{ email }}</p>
+            </div>
+
+            <div class="result-card">
+                <h3>🤖 Classification</h3>
+                {% if label %}
+                    <div class="badge {% if label == 'LABEL_0' %}badge-safe{% else %}badge-phishing{% endif %}">
+                        {% if label == 'LABEL_0' %}SAFE{% else %}PHISHING{% endif %}
+                    </div>
+                    <div class="confidence">Confidence: {{ (score * 100)|round(2) }}%</div>
+                {% else %}
+                    <p>Classification data not available</p>
+                {% endif %}
+            </div>
+
+            <div class="result-card">
+                <h3>✨ AI Analysis</h3>
+                <p>{{ openrouter_analysis }}</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

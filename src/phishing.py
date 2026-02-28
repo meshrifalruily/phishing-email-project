@@ -1,4 +1,3 @@
-from transformers import AutoTokenizer, AutoModel, AutoModelForSequenceClassification
 from transformers import pipeline
 from huggingface_hub import login 
 import torch
@@ -11,24 +10,27 @@ print(torch.__version__)
 load_dotenv()
 login(token=os.environ["hf_token"])
 
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
-
-model_name = "Auguzcht/securisense-phishing-detection"
-
-# tokenizer = AutoTokenizer.from_pretrained(model_name)
-# model = AutoModelForSequenceClassification.from_pretrained(model_name)
-
-# print("Downloaded successfully")
-from transformers import pipeline
-
 classifier = pipeline(
     "text-classification",
     model="Auguzcht/securisense-phishing-detection",
-    device="mps"
+    device="mps", 
 )
 
-email = "Dear user, your account will be suspended. Click here to verify."
+def analyze_email(email: str):
+    """
+    Analyzes email content for phishing detection.
+    
+    Args:
+        email (str): The email content to analyze
+        
+    Returns:
+        list: Classification results with labels and scores
+    """
+    if not email or not email.strip():
+        return [{"label": "LABEL_0", "score": 0.0}]
+    
+    result = classifier(email)
+    return result[0]
 
-result = classifier(email)
+print(analyze_email("Congratulations! You've won a free iPhone. Click here to claim your prize."))  
 
-print(result)
