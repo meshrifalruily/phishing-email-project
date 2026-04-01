@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Phishing Email Detector</title>
     <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #64748b;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,221 +20,309 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-gradient);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            color: #1e293b;
         }
 
         .container {
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 900px;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            max-width: 800px;
             width: 100%;
             overflow: hidden;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
+            background: white;
+            padding: 40px 40px 20px;
             text-align: center;
         }
 
         .header h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
+            font-size: 32px;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 12px;
+            letter-spacing: -0.025em;
         }
 
         .header p {
-            font-size: 14px;
-            opacity: 0.9;
+            font-size: 16px;
+            color: #64748b;
+            max-width: 500px;
+            margin: 0 auto;
         }
 
         .content {
-            padding: 40px;
+            padding: 20px 40px 40px;
         }
 
         .input-section {
-            margin-bottom: 30px;
+            margin-bottom: 24px;
         }
 
         .input-section label {
             display: block;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
-            margin-bottom: 12px;
-            color: #333;
+            margin-bottom: 8px;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .textarea-container {
+            position: relative;
         }
 
         .input-section textarea {
             width: 100%;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+            line-height: 1.6;
+            font-family: inherit;
             resize: vertical;
-            min-height: 150px;
-            transition: border-color 0.3s ease;
+            min-height: 200px;
+            transition: all 0.2s ease;
+            background: #f8fafc;
         }
 
         .input-section textarea:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
         }
 
         .button-group {
             display: flex;
             gap: 12px;
-            margin-bottom: 30px;
         }
 
         button {
-            padding: 12px 28px;
+            padding: 14px 28px;
             border: none;
-            border-radius: 8px;
-            font-size: 15px;
+            border-radius: 10px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .btn-analyze {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary);
             color: white;
-            flex: 1;
+            flex: 2;
         }
 
         .btn-analyze:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-analyze:active {
+            transform: translateY(0);
+        }
+
+        .btn-analyze:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         .btn-clear {
-            background: #f0f0f0;
-            color: #333;
-            padding: 12px 24px;
+            background: #f1f5f9;
+            color: #475569;
+            flex: 1;
         }
 
         .btn-clear:hover {
-            background: #e0e0e0;
+            background: #e2e8f0;
         }
 
-        .result-card {
-            background: #f9f9f9;
-            border-left: 5px solid #667eea;
-            padding: 20px;
-            border-radius: 8px;
+        .features {
+            margin-top: 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding-top: 30px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .feature-item {
+            display: flex;
+            gap: 12px;
+        }
+
+        .feature-icon {
+            background: #eef2ff;
+            color: var(--primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 20px;
+        }
+
+        .feature-text h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #1e293b;
+        }
+
+        .feature-text p {
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .is-loading .spinner {
+            display: block;
+        }
+
+        .is-loading .btn-text {
+            display: none;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
             margin-bottom: 20px;
         }
 
-        .result-card h3 {
-            font-size: 16px;
-            margin-bottom: 12px;
-            color: #333;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        .result-card p {
-            color: #666;
-            line-height: 1.6;
-            font-size: 14px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
+        .loading-text {
+            color: #667eea;
             font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .badge-phishing {
-            background: #ffe6e6;
-            color: #d32f2f;
-        }
-
-        .badge-safe {
-            background: #e6f4ea;
-            color: #1e8e3e;
-        }
-
-        .classification-info {
-            font-weight: 600;
-            font-size: 14px;
-            color: #666;
-            margin-top: 10px;
-        }
-
-        .error-message {
-            background: #ffe6e6;
-            color: #d32f2f;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 5px solid #d32f2f;
-            margin-top: 20px;
-        }
-
-        .success-message {
-            background: #e6f4ea;
-            color: #1e8e3e;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 5px solid #1e8e3e;
-            margin-top: 20px;
+            font-size: 18px;
         }
 
         @media (max-width: 600px) {
-            .content {
-                padding: 20px;
-            }
 
-            .header {
-                padding: 20px;
-            }
-
-            .header h1 {
-                font-size: 22px;
-            }
-
-            .button-group {
-                flex-direction: column;
-            }
-
-            .result-card {
-                margin-bottom: 15px;
-            }
+            .header { padding: 30px 20px 10px; }
+            .content { padding: 10px 20px 30px; }
+            .features { grid-template-columns: 1fr; }
+            .button-group { flex-direction: column; }
+            .btn-analyze { order: 1; }
+            .btn-clear { order: 2; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🔐 Phishing Email Detector</h1>
-            <p>Analyze emails with AI-powered phishing detection</p>
+            <h1>🔐 Phishing Detector</h1>
+            <p>Paste the content of any suspicious email below for a comprehensive security analysis.</p>
         </div>
 
         <div class="content">
-            <form method="POST" action="/analyze_email">
+            <form id="analyzeForm" method="POST" action="/analyze_email">
                 <div class="input-section">
-                    <label for="email">📧 Paste your email content here:</label>
-                    <textarea name="email" id="email" placeholder="Enter the email text you want to analyze..." required></textarea>
+                    <label for="email">Email Content</label>
+                    <div class="textarea-container">
+                        <textarea name="email" id="email" placeholder="E.g., Congratulations! You have won a prize. Please click here to claim..." required></textarea>
+                    </div>
                 </div>
 
                 <div class="button-group">
-                    <button type="submit" class="btn-analyze">Analyze Email</button>
+                    <button type="submit" id="submitBtn" class="btn-analyze">
+                        <span class="spinner"></span>
+                        <span class="btn-text">Analyze for Threats</span>
+                    </button>
                     <button type="reset" class="btn-clear">Clear</button>
                 </div>
             </form>
+
+            <div class="features">
+                <div class="feature-item">
+                    <div class="feature-icon">🔬</div>
+                    <div class="feature-text">
+                        <h4>ML Classification</h4>
+                        <p>Real-time analysis using specialized phishing detection models from HuggingFace.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🧠</div>
+                    <div class="feature-text">
+                        <h4>AI Reasoning</h4>
+                        <p>Expert reasoning powered by Large Language Models to explain potential risks.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <script>
+        const form = document.getElementById('analyzeForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', () => {
+            submitBtn.classList.add('is-loading');
+            submitBtn.disabled = true;
+        });
+    </script>
 </body>
 </html>

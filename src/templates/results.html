@@ -3,140 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phishing Email Detector - Results</title>
+    <title>Analysis Results - Phishing Detector</title>
     <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --safe: #10b981;
+            --phishing: #ef4444;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-gradient);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            color: #1e293b;
         }
 
         .container {
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             max-width: 900px;
             width: 100%;
+            overflow: hidden;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 25px;
-            text-align: center;
+            background: white;
+            padding: 30px 40px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .header h1 { font-size: 26px; }
+        .header-title h1 {
+            font-size: 20px;
+            font-weight: 800;
+            color: #1e293b;
+        }
 
-        .header p { font-size: 13px; opacity: 0.9; margin-top: 8px; }
-
-        .content { padding: 30px; }
-
-        .back-button {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 10px 20px;
-            background: #f0f0f0;
-            color: #333;
+        .btn-back {
             text-decoration: none;
-            border-radius: 6px;
+            color: #64748b;
+            font-size: 14px;
             font-weight: 600;
-            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
         }
 
-        .back-button:hover { background: #e0e0e0; }
+        .btn-back:hover { color: var(--primary); }
 
-        .success-message {
-            background: #e6f4ea;
-            color: #1e8e3e;
-            padding: 12px;
-            border-radius: 6px;
-            border-left: 4px solid #1e8e3e;
-            margin-bottom: 20px;
+        .content { padding: 40px; }
+
+        .status-banner {
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
         }
 
-        .result-card {
-            background: #f9f9f9;
-            border-left: 4px solid #667eea;
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 15px;
+        .status-banner.safe { background: #ecfdf5; border: 1px solid #a7f3d0; }
+        .status-banner.phishing { background: #fef2f2; border: 1px solid #fecaca; }
+
+        .status-icon {
+            font-size: 32px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
         }
 
-        .result-card h3 { font-size: 15px; margin-bottom: 10px; color: #333; }
+        .status-text h2 {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
 
-        .result-card p {
-            color: #666;
-            line-height: 1.5;
+        .status-banner.safe .status-text h2 { color: #065f46; }
+        .status-banner.phishing .status-text h2 { color: #991b1b; }
+
+        .status-text p { font-size: 14px; opacity: 0.8; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        .card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .card h3 {
             font-size: 13px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            max-height: 150px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .email-preview {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #475569;
+            max-height: 120px;
             overflow-y: auto;
+            white-space: pre-wrap;
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
         }
 
-        .badge {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 8px;
+        .ai-analysis {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #1e293b;
         }
 
-        .badge-phishing { background: #ffe6e6; color: #d32f2f; }
+        .confidence-meter {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
 
-        .badge-safe { background: #e6f4ea; color: #1e8e3e; }
+        .confidence-fill {
+            height: 100%;
+            transition: width 1s ease-out;
+        }
 
-        .confidence { font-weight: 600; font-size: 13px; color: #666; margin-top: 8px; }
+        .safe .confidence-fill { background: var(--safe); }
+        .phishing .confidence-fill { background: var(--phishing); }
 
-        @media (max-width: 600px) {
-            .content { padding: 20px; }
+        .confidence-score {
+            font-weight: 700;
+            font-size: 18px;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 640px) {
             .header { padding: 20px; }
-            .header h1 { font-size: 22px; }
+            .content { padding: 20px; }
+            .status-banner { flex-direction: column; text-align: center; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🔐 Phishing Email Detector</h1>
-            <p>AI-powered phishing detection results</p>
+            <div class="header-title">
+                <h1>🔐 Results</h1>
+            </div>
+            <a href="/" class="btn-back">← New Analysis</a>
         </div>
 
         <div class="content">
-            <a href="/" class="back-button">← Back</a>
-
-            <div class="success-message">✓ Analysis complete!</div>
-
-            <div class="result-card">
-                <h3>📧 Email Analysis</h3>
-                <p>{{ email }}</p>
+            {% set is_phishing = label != 'LABEL_0' and label != 'ERROR' %}
+            
+            <div class="status-banner {% if is_phishing %}phishing{% else %}safe{% endif %}">
+                <div class="status-icon">
+                    {% if is_phishing %}🚩{% else %}✅{% endif %}
+                </div>
+                <div class="status-text">
+                    <h2>{% if is_phishing %}Likely Phishing{% else %}Likely Safe{% endif %}</h2>
+                    <p>Analysis based on machine learning and AI reasoning.</p>
+                </div>
             </div>
 
-            <div class="result-card">
-                <h3>🤖 Classification</h3>
-                {% if label %}
-                    <div class="badge {% if label == 'LABEL_0' %}badge-safe{% else %}badge-phishing{% endif %}">
-                        {% if label == 'LABEL_0' %}SAFE{% else %}PHISHING{% endif %}
+            <div class="grid">
+                <div class="card">
+                    <h3>📧 Email Content</h3>
+                    <div class="email-preview">{{ email }}</div>
+                </div>
+
+                <div class="card">
+                    <h3>🔬 Classifier Analysis</h3>
+                    <div class="confidence-score">
+                        {% if label == 'ERROR' %}
+                            Error in analysis
+                        {% else %}
+                            {{ (score * 100)|round(1) }}% Match
+                        {% endif %}
                     </div>
-                    <div class="confidence">Confidence: {{ (score * 100)|round(2) }}%</div>
-                {% else %}
-                    <p>Classification data not available</p>
-                {% endif %}
-            </div>
+                    <div class="confidence-meter {% if is_phishing %}phishing{% else %}safe{% endif %}">
+                        <div class="confidence-fill" style="width: {{ score * 100 }}%"></div>
+                    </div>
+                </div>
 
-            <div class="result-card">
-                <h3>✨ AI Analysis</h3>
-                <p>{{ openrouter_analysis }}</p>
+                <div class="card">
+                    <h3>✨ AI Expert Reasoning</h3>
+                    <div id="ai-analysis-content" class="ai-analysis" style="display: none;">{{ openrouter_analysis }}</div>
+                    <div id="markdown-output" class="ai-analysis"></div>
+                </div>
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const rawContent = document.getElementById('ai-analysis-content').textContent;
+            const output = document.getElementById('markdown-output');
+            
+            // Configure marked options
+            marked.setOptions({
+                breaks: true,
+                gfm: true
+            });
+
+            output.innerHTML = marked.parse(rawContent);
+        });
+    </script>
 </body>
 </html>
